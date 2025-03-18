@@ -1,11 +1,20 @@
 {
   "Version": 1,
-  "Hash": "d2OGtB6DjW3joC5wLSSQ3mxmtVO9OYWmhcRSGKSPDIs=",
+  "Hash": "VWs2QyZhnXMEyE3MWmzlEZ/NgQpaD6+dZoVQW/ZL4J0=",
   "Source": "FinLit",
   "BasePath": "_content/FinLit",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "FinLit\\wwwroot",
+      "Source": "FinLit",
+      "ContentRoot": "D:\\DiplomaWork\\FinLit\\wwwroot\\",
+      "BasePath": "_content/FinLit",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [],
+  "Endpoints": []
 }
