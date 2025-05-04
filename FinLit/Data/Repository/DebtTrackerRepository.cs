@@ -30,7 +30,7 @@ namespace FinLit.Data.Repository
             }
         }
 
-        public async Task<IEnumerable<DebtTracker>> GetAllAsync() => await dbContent.DebtTrackers.ToListAsync();
+        public async Task<IEnumerable<DebtTracker>> GetAllAsync() => await dbContent.DebtTrackers.OrderBy(dt => dt.Status).ThenBy(dt => dt.DueDate).ToListAsync();
 
         public async Task<DebtTracker> GetByIdAsync(int id)
         {

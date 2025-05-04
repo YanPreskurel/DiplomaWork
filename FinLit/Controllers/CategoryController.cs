@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinLit.Controllers
 {
-    public class CategoryController : Controller
+    public class CategoryController : BaseController
     {
         private readonly ICategories categoriesRepository; 
         public CategoryController(ICategories categoriesRepository)
@@ -14,11 +14,9 @@ namespace FinLit.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CategoryViewAsync()
+        public async Task<IActionResult> CategoryView()
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("AuthentificationView", "User");
+            var userId = GetUserIdOrRedirect();
 
             var incomeCategories = (await categoriesRepository.GetAllIncomeCategoriesAsync())
                     .Where(c => c.UserId == userId);
@@ -37,9 +35,7 @@ namespace FinLit.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCategory(CategoryFormViewModel model)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("AuthentificationView", "User");
+            var userId = GetUserIdOrRedirect();
 
             var newCategory = new Category
             {
