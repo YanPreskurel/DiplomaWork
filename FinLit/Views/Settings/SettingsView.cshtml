@@ -1,0 +1,93 @@
+﻿@model FinLit.ViewModels.SettingsViewModel
+
+@{
+    ViewBag.Title = "Настройки";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <ul class="list-group" id="settings-menu">
+                <li class="list-group-item active" data-section="personalization">Персонализация</li>
+                <li class="list-group-item" data-section="theme">Тема</li>
+                <li class="list-group-item" data-section="notifications">Уведомления</li>
+            </ul>
+        </div>
+
+        <div class="col-md-9">
+            <!-- Персонализация -->
+            <div id="personalization" class="settings-section">
+                <h4>Персонализация</h4>
+                <form asp-action="UpdatePersonalization" method="post">
+                    <div class="mb-3">
+                        <label>Период отображения по умолчанию</label>
+                        <select asp-for="Personalization.PeriodOfTime" class="form-select">
+                            <option value="day">День</option>
+                            <option value="month">Месяц</option>
+                            <option value="year">Год</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label>Аккаунт по умолчанию</label>
+                        <select asp-for="Personalization.AccountId" asp-items="Model.Accounts" class="form-select"></select>
+                    </div>
+                    <input type="hidden" asp-for="Personalization.Id" />
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </form>
+            </div>
+
+            <!-- Тема -->
+            <div id="theme" class="settings-section d-none">
+                <h4>Тема</h4>
+                <form asp-action="UpdateUserSettings" method="post">
+                    <select asp-for="UserSettings.Theme" class="form-select mb-3">
+                        <option value="default">По умолчанию</option>
+                        <option value="light">Светлая</option>
+                        <option value="dark">Тёмная</option>
+                    </select>
+                    <input type="hidden" asp-for="UserSettings.Id" />
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </form>
+            </div>
+
+            <!-- Уведомления -->
+            <div id="notifications" class="settings-section d-none">
+                <h4>Уведомления</h4>
+                <form asp-action="UpdateUserSettings" method="post">
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" asp-for="UserSettings.NotificationPreferences" />
+                        <label class="form-check-label">Получать уведомления</label>
+                    </div>
+                    <input type="hidden" asp-for="UserSettings.Id" />
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showSection(id, element) {
+            document.querySelectorAll('.settings-section').forEach(el => el.classList.add('d-none'));
+            document.getElementById(id).classList.remove('d-none');
+
+            document.querySelectorAll('#settings-menu .list-group-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuItems = document.querySelectorAll('#settings-menu .list-group-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    const sectionId = this.dataset.section;
+                    showSection(sectionId, this);
+                });
+            });
+        });
+    </script>
+}
+
+@section Footer {
+    <footer class="text-center text-muted mt-4">Copyright © FinLit.by, @DateTime.Now.Year. All rights reserved</footer>
+}

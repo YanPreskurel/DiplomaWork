@@ -1,0 +1,50 @@
+﻿@model IEnumerable<Notification>
+
+@{
+    ViewBag.Title = "Notifications";
+}
+
+<div class="card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">Уведомления</h4>
+        <form asp-action="ClearNotifications" method="post" class="mb-0">
+            <button type="submit" class="btn btn-success d-flex align-items-center gap-2">
+                <i class="bi bi-plus-circle"></i> Очистить все
+            </button>
+        </form>
+
+    </div>
+
+    <div class="table-responsive">
+        @if (!Model.Any())
+        {
+            <p class="text-muted">Нет уведомлений</p>
+        }
+        else
+        {
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Дата</th>
+                        <th>Время</th>
+                        <th>Инфомация</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var notification in Model)
+                    {
+                        <tr>
+                            <td>@notification.DateSent.ToLocalTime().ToShortDateString()</td>
+                            <td>@notification.DateSent.ToLocalTime().ToShortTimeString()</td>
+                            <td>@notification.Message.ToString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>   
+</div>   
+
+@section Footer {
+    <footer class="text-center text-muted mt-4">Copyright © FinLit.by, @DateTime.Now.Year. All rights reserved</footer>
+}

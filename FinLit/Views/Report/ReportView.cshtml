@@ -1,0 +1,237 @@
+﻿@using Newtonsoft.Json
+@model FinLit.ViewModels.ReportViewModel
+
+@{
+    ViewBag.Title = "Отчёты";
+}
+
+<div class="d-flex justify-content-center mb-4">
+    <button class="btn btn-outline-success me-2" id="incomeBtn">Доходы</button>
+    <button class="btn btn-outline-danger" id="expenseBtn">Расходы</button>
+    <button class="btn btn-outline-primary ms-2" id="forecastBtn">Прогнозы</button>
+</div>
+
+<div id="chartContainer" class="card p-4 shadow-sm rounded-4 mb-4">
+    <canvas id="reportChart" style="height:400px;"></canvas>
+</div>
+
+<div id="pieAndListContainer" class="card p-4 shadow-sm rounded-4 mb-4">
+    <div class="d-flex flex-wrap align-items-center">
+        <div style="width: 250px; height: 250px;">
+            <canvas id="pieChart"></canvas>
+        </div>
+        <div class="flex-grow-1 ps-4">
+            <h5>Детализация</h5>
+            <ul id="detailsList" class="list-group list-group-flush">
+                <li class="list-group-item text-center text-muted">
+                    Выберите тип отчёта
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const expenseReports = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Model.ExpenseReportViewModels ?? new List<ExpenseReportViewModel>()))');
+            const incomeReports = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Model.IncomeReportViewModels ?? new List<IncomeReportViewModel>()))');
+            const forecastReports = JSON.parse('@Html.Raw(JsonConvert.SerializeObject(Model.ForecastReport != null ? new List<ForecastReport> { Model.ForecastReport } : new List<ForecastReport>()))');
+
+            const ctx = document.getElementById('reportChart').getContext('2d');
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: '',
+                        data: [],
+                        borderColor: 'red',
+                        backgroundColor: 'rgba(255,99,132,0.2)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'График'
+                        }
+                    }
+                }
+            });
+
+            const pieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [],
+                        borderColor: [],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            function prepareDailyData(transactions) {
+                const now = new Date();
+                const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                let dailyData = Array(daysInMonth).fill(0);
+
+                transactions.forEach(tr => {
+                    const date = new Date(tr.Date);
+                    if (date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()) {
+                        const day = date.getDate() - 1;
+                        dailyData[day] += tr.Amount;
+                    }
+                });
+
+                return dailyData;
+            }
+
+            function prepareCategoryData(transactions) {
+                const totalsByCategory = {};
+                let totalAmount = 0;
+
+                transactions.forEach(tr => {
+                    if (!totalsByCategory[tr.Category]) {
+                        totalsByCategory[tr.Category] = 0;
+                    }
+                    totalsByCategory[tr.Category] += tr.Amount;
+                    totalAmount += tr.Amount;
+                });
+
+                const percentages = Object.entries(totalsByCategory).map(([category, amount]) => ({
+                    category,
+                    amount,
+                    percentage: totalAmount > 0 ? ((amount / totalAmount) * 100).toFixed(2) : 0
+                }));
+
+                return percentages;
+            }
+
+            function updateChart(transactions, label, color) {
+                const now = new Date();
+                const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                const labels = Array.from({ length: daysInMonth }, (_, i) => (i + 1).toString());
+
+                const values = prepareDailyData(transactions);
+
+                chart.data.labels = labels;
+                chart.data.datasets[0].data = values;
+                chart.data.datasets[0].label = label;
+                chart.data.datasets[0].borderColor = color;
+                chart.data.datasets[0].backgroundColor = color + '33';
+                chart.update();
+            }
+
+            function updatePieChart(transactions) {
+                const categoryData = prepareCategoryData(transactions);
+
+                const colors = categoryData.map(() => `hsl(${Math.random() * 360}, 70%, 70%)`);
+
+                pieChart.data.labels = categoryData.map(c => c.category);
+                pieChart.data.datasets[0].data = categoryData.map(c => c.percentage);
+                pieChart.data.datasets[0].backgroundColor = colors;
+                pieChart.data.datasets[0].borderColor = colors;
+                pieChart.update();
+            }
+
+            function updateDetailsList(transactions) {
+                const detailsList = document.getElementById('detailsList');
+                detailsList.innerHTML = '';
+
+                const categoryData = prepareCategoryData(transactions);
+
+                if (categoryData.length === 0) {
+                    detailsList.innerHTML = '<li class="list-group-item text-center text-muted">Нет данных для отображения</li>';
+                    return;
+                }
+
+                categoryData.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between';
+                    li.innerHTML = `<span>${item.category}</span><strong>${item.percentage}%</strong>`;
+                    detailsList.appendChild(li);
+                });
+            }
+
+            function showIncome() {
+                const transactions = incomeReports.flatMap(r => r.Transactions || []);
+                updateChart(transactions, "Доходы", "green");
+                updatePieChart(transactions);
+                updateDetailsList(transactions);
+
+                // Показываем блок детализации
+                document.getElementById('pieAndListContainer').style.display = 'block';
+            }
+
+            function showExpense() {
+                const transactions = expenseReports.flatMap(r => r.Transactions || []);
+                updateChart(transactions, "Расходы", "red");
+                updatePieChart(transactions);
+                updateDetailsList(transactions);
+
+                // Показываем блок детализации
+                document.getElementById('pieAndListContainer').style.display = 'block';
+            }
+
+
+            function showForecast() {
+                const labels = forecastReports.map(r => new Date(r.StartDate).toLocaleDateString('ru-RU', { month: 'short', year: 'numeric' }));
+                const values = forecastReports.map(r => r.TotalExpenses);
+
+                chart.data.labels = labels;
+                chart.data.datasets[0].data = values;
+                chart.data.datasets[0].label = "Прогноз";
+                chart.data.datasets[0].borderColor = 'blue';
+                chart.data.datasets[0].backgroundColor = 'blue33';
+                chart.update();
+
+                pieChart.data.labels = [];
+                pieChart.data.datasets[0].data = [];
+                pieChart.data.datasets[0].backgroundColor = [];
+                pieChart.data.datasets[0].borderColor = [];
+                pieChart.update();
+
+                // Скрываем блок детализации
+                document.getElementById('pieAndListContainer').style.display = 'none';
+            }
+
+
+            document.getElementById('incomeBtn').addEventListener('click', showIncome);
+            document.getElementById('expenseBtn').addEventListener('click', showExpense);
+            document.getElementById('forecastBtn').addEventListener('click', showForecast);
+
+            // Изначально показываем расходы
+            showExpense();
+        });
+    </script>
+}
+
+@section Footer {
+    <footer class="text-center text-muted mt-4">
+        Copyright © FinLit.by, @DateTime.Now.Year. All rights reserved
+    </footer>
+}

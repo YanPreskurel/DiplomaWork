@@ -1,7 +1,12 @@
-﻿namespace FinLit.Data.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace FinLit.Data.Models
 {
     public class ActivityLog
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public required string Type { get; set; }
         public string? Description { get; set; }

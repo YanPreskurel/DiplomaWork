@@ -1,0 +1,169 @@
+﻿@model FinLit.ViewModels.AuthentificationViewModel
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Аутентификация";
+}
+
+<style>
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .auth-container {
+        max-width: 400px;
+        margin: 60px auto;
+        background: white;
+        padding: 30px 40px;
+        border-radius: 16px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .tab-button {
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        margin-right: 10px;
+        background: transparent;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+
+        .tab-button:hover {
+            background-color: #e0e0e0;
+        }
+
+    .active-tab {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .form-section {
+        display: none;
+        margin-top: 20px;
+    }
+
+        .form-section.active {
+            display: block;
+        }
+
+    label {
+        margin-top: 10px;
+        font-weight: 500;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        transition: border-color 0.2s ease;
+    }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+    }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+    .validation-error {
+        color: red;
+        font-size: 0.9em;
+        margin-bottom: 5px;
+    }
+</style>
+
+<div class="auth-container">
+    <div style="text-align:center; margin-bottom: 20px;">
+        <button class="tab-button active-tab" onclick="switchForm('login')">Вход</button>
+        <button class="tab-button" onclick="switchForm('register')">Регистрация</button>
+    </div>
+
+    <!-- Вход -->
+    <div id="login-form" class="form-section active">
+        <form method="post" asp-controller="User" asp-action="Login">
+            <label>Email</label>
+            <input asp-for="Login.Email" />
+            <span asp-validation-for="Login.Email" class="validation-error"></span>
+
+            <label>Пароль</label>
+            <input asp-for="Login.Password" type="password" />
+            <span asp-validation-for="Login.Password" class="validation-error"></span>
+
+            <button type="submit">Войти</button>
+        </form>
+    </div>
+
+    <!-- Регистрация -->
+    <div id="register-form" class="form-section">
+        <form method="post" asp-controller="User" asp-action="Register">
+            <label>Имя</label>
+            <input asp-for="Register.Name" />
+            <span asp-validation-for="Register.Name" class="validation-error"></span>
+
+            <label>Email</label>
+            <input asp-for="Register.Email" />
+            <span asp-validation-for="Register.Email" class="validation-error"></span>
+
+            <label>Пароль</label>
+            <input asp-for="Register.Password" type="password" />
+            <span asp-validation-for="Register.Password" class="validation-error"></span>
+
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+    </div>
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="validation-error" style="margin-top:10px;">
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <div>@error.ErrorMessage</div>
+            }
+        </div>
+    }
+</div>
+
+<script>
+    function switchForm(formType) {
+        const loginTab = document.getElementById("login-form");
+        const registerTab = document.getElementById("register-form");
+        const buttons = document.querySelectorAll(".tab-button");
+
+        buttons.forEach(btn => btn.classList.remove("active-tab"));
+
+        if (formType === "login") {
+            loginTab.classList.add("active");
+            registerTab.classList.remove("active");
+            buttons[0].classList.add("active-tab");
+        } else {
+            loginTab.classList.remove("active");
+            registerTab.classList.add("active");
+            buttons[1].classList.add("active-tab");
+        }
+    }
+</script>
+
+@section Footer {
+    <footer class="text-center text-muted mt-4">Copyright © FinLit.by, @DateTime.Now.Year. All rights reserved</footer>
+}

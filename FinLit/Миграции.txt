@@ -1,0 +1,16 @@
+✅ Шаг 1: Удалить все миграции
+
+								Удаляем все миграционные файлы в проекте:
+
+✅ Шаг 2: Удалить базу данных
+
+								dotnet ef database drop
+
+✅ Шаг 3: Пересоздать миграции
+
+								dotnet ef Migrations add InitialCreate
+
+✅ Шаг 4: Применить миграцию (создать базу)
+
+								dotnet ef database update
+

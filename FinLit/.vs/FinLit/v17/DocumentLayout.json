@@ -1,0 +1,38 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\DiplomaWork\\FinLit\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|d:\\diplomawork\\finlit\\requirementsandbugs.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|solutionrelative:requirementsandbugs.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 145,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "RequirementsAndBugs.txt",
+              "DocumentMoniker": "D:\\DiplomaWork\\FinLit\\RequirementsAndBugs.txt",
+              "RelativeDocumentMoniker": "RequirementsAndBugs.txt",
+              "ToolTip": "D:\\DiplomaWork\\FinLit\\RequirementsAndBugs.txt",
+              "RelativeToolTip": "RequirementsAndBugs.txt",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAEkAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-05-03T17:56:34.172Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
