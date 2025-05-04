@@ -1,0 +1,95 @@
+﻿@model FinLit.ViewModels.CategoryFormViewModel
+
+@{
+    ViewBag.Title = "Categories";
+}
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">Категории</h2>
+
+    <button class="btn btn-success mb-3" type="button" onclick="toggleCategoryForm()">Добавить категорию</button>
+
+    <!-- Форма добавления категории -->
+    <div id="categoryForm" style="display: none;">
+        <form asp-action="AddCategory" method="post" class="card p-4 shadow-sm rounded-4 mb-4">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Название категории</label>
+                    <input type="text" name="CategoryName" class="form-control" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Тип</label>
+                    <select name="CategoryType" class="form-select">
+                        <option value="Income">Доход</option>
+                        <option value="Expense">Расход</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label">URL картинки (необязательно)</label>
+                    <input type="text" name="CategoryImage" class="form-control" />
+                </div>
+                <div class="col-12 text-end">
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Доходы</h4>
+            <div class="row row-cols-1 row-cols-md-2 g-3">
+                @foreach (var category in Model.IncomeCategories)
+                {
+                    <div class="col">
+                        <div class="card shadow-sm p-3 rounded-4 text-center h-100">
+                            @if (!string.IsNullOrEmpty(category.CategoryImage))
+                            {
+                                <img src="@category.CategoryImage" class="card-img-top mx-auto" style="height: 60px; width: 60px;" />
+                            }
+                            <div class="card-body">
+                                <h6 class="card-title">@category.CategoryName</h6>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h4>Расходы</h4>
+            <div class="row row-cols-1 row-cols-md-2 g-3">
+                @foreach (var category in Model.ExpenseCategories)
+                {
+                    <div class="col">
+                        <div class="card shadow-sm p-3 rounded-4 text-center h-100">
+                            @if (!string.IsNullOrEmpty(category.CategoryImage))
+                            {
+                                <img src="@category.CategoryImage" class="card-img-top mx-auto" style="height: 60px; width: 60px;" />
+                            }
+                            <div class="card-body">
+                                <h6 class="card-title">@category.CategoryName</h6>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleCategoryForm() {
+            const form = document.getElementById("categoryForm");
+            form.style.display = form.style.display === "none" ? "block" : "none";
+        }
+    </script>
+}
+
+@section Footer {
+    <footer class="text-center text-muted mt-4">Copyright © FinLit.by, @DateTime.Now.Year. All rights reserved</footer>
+}

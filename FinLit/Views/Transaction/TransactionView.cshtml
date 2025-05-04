@@ -1,0 +1,150 @@
+﻿@model FinLit.ViewModels.TransactionCategoryViewModel
+
+@{
+    ViewBag.Title = "Transaction";
+}
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<form method="get" asp-controller="Transaction" asp-action="TransactionView" class="card p-4 shadow-sm rounded-4 mb-4">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <label class="form-label">Тип операции</label>
+            <select name="operationType" class="form-select">
+                <option value="All" selected="@(Model.OperationType == "All")">Все</option>
+                <option value="Income" selected="@(Model.OperationType == "Income")">Доходы</option>
+                <option value="Expense" selected="@(Model.OperationType == "Expense")">Расходы</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Диапазон дат</label>
+            <div class="d-flex gap-2">
+                <input type="date" name="startDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" class="form-control" />
+                <input type="date" name="endDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" class="form-control" />
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Категория</label>
+            <select name="selectedCategoryId" class="form-select">
+                <option value="">Все категории</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id" selected="@(Model.SelectedCategoryId == category.Id)">
+                        @category.CategoryName
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-auto d-flex align-items-end">
+            <button type="submit" class="btn btn-primary text-nowrap">Применить</button>
+        </div>
+
+    </div>
+</form>
+
+<h2 class="mb-3">История операций по счетам</h2>
+
+<table class="table table-hover rounded-4 shadow-sm">
+    <thead class="table-light">
+        <tr>
+            <th>Счет</th>
+            <th>Сумма</th>
+            <th>Дата</th>
+            <th>Время</th>
+            <th>Категория</th>
+            <th>Тип</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in Model.Transactions)
+        {
+            <tr>
+                @{
+                    var account = Model.Accounts.FirstOrDefault(a => a.Id == transaction.AccountId);
+                }
+                <td>@(account?.Name ?? "Неизвестно")</td>
+                <td>@transaction.Amount @account?.Currency</td>
+                <td>@transaction.Date.ToLocalTime().ToShortDateString()</td>
+                <td>@transaction.Date.ToLocalTime().ToShortTimeString()</td>
+                <td>@transaction.Category.CategoryName</td>
+                <td>
+                    @if (transaction.Category.CategoryType == "Income")
+                    {
+                        <span class="text-success">Доход</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">Расход</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@* @section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('filterForm');
+            const tableBody = document.querySelector('table tbody');
+            const categorySelect = form.querySelector('select[name="selectedCategoryId"]');
+
+            // Превращаем обычную форму в AJAX-поведение
+            async function fetchTransactions() {
+                const params = new URLSearchParams(new FormData(form)).toString();
+                const response = await fetch(`/Transaction/GetFilteredTransactions?${params}`);
+                const data = await response.json();
+
+                // Обновление таблицы
+                tableBody.innerHTML = '';
+                if (!data.transactions.length) {
+                    tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Нет операций</td></tr>';
+                } else {
+                    data.transactions.forEach(t => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${t.AccountName}</td>
+                            <td>${t.Amount} ${t.Currency}</td>
+                            <td>${t.Date}</td>
+                            <td>${t.Time}</td>
+                            <td>${t.CategoryName}</td>
+                            <td><span class="${t.Type === 'Income' ? 'text-success' : 'text-danger'}">${t.Type === 'Income' ? 'Доход' : 'Расход'}</span></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+
+                // Обновление списка категорий
+                categorySelect.innerHTML = '<option value="">Все категории</option>';
+                data.categories.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = c.categoryName;
+                    categorySelect.appendChild(opt);
+                });
+            }
+
+            // Ajax только если JS активен — иначе fallback на обычную форму
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                fetchTransactions();
+            });
+
+            form.addEventListener('change', () => {
+                fetchTransactions();
+            });
+
+            // Первый запуск
+            fetchTransactions();
+        });
+    </script>
+} *@
+
+
+
+@section Footer {
+    <footer class="text-center text-muted mt-4">Copyright © FinLit.by, @DateTime.Now.Year. All rights reserved</footer>
+}

@@ -1,0 +1,48 @@
+﻿@model FinLit.Data.Models.Account
+
+@{
+    ViewBag.Title = "Добавить новый счёт";
+    var currencies = ViewBag.Currencies as List<string>;
+}
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h3>Добавить новый счёт</h3>
+
+<form method="post" asp-controller="Account" asp-action="AddAccount" class="card p-4 mb-4">
+    <div class="mb-3">
+        <label for="Name" class="form-label">Название счёта</label>
+        <input type="text" class="form-control" id="Name" name="Name" required />
+    </div>
+    <div class="mb-3">
+        <label for="Balance" class="form-label">Баланс</label>
+        <input type="number" class="form-control" id="Balance" name="Balance" required />
+    </div>
+    <div class="mb-3">
+        <div class="mb-3">
+            <label for="Currency" class="form-label">Валюта</label>
+            <select class="form-select" id="Currency" name="Currency" required>
+                <option value="">Выберите валюту</option>
+                @if (currencies != null)
+                {
+                    foreach (var currency in currencies)
+                    {
+                        <option value="@currency">@currency</option>
+                    }
+                }
+                else
+                {
+                    <option disabled>Список валют отсутствует</option>
+                }
+            </select>
+        </div>
+
+    </div>
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary">Добавить</button>
+    </div>
+</form>
+
+@section Footer {
+    <footer class="text-center text-muted mt-4">Copyright © FinLit.by, @DateTime.Now.Year. All rights reserved</footer>
+}

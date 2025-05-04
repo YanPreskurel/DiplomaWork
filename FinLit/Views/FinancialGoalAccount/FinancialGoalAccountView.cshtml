@@ -1,0 +1,92 @@
+﻿@using FinLit.Data.Enums
+@model FinLit.ViewModels.FinancialGoalAccountFormViewModel
+
+@{
+    ViewBag.Title = "Goals";
+}
+
+
+<div class="container py-4">
+    <h2 class="mb-4">Мои финансовые цели</h2>
+
+    <!-- Кнопка для раскрытия формы -->
+    <button class="btn btn-success mb-4" type="button" onclick="toggleGoalForm()">Добавить цель</button>
+
+    <!-- Скрытая форма добавления цели -->
+    <div id="goalForm" class="card p-4 shadow-sm rounded-4 mb-4" style="display: none;">
+        <form asp-action="AddFinancialGoalAccount" method="post">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label">Название цели</label>
+                    <input type="text" name="Name" class="form-control" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Сумма цели</label>
+                    <input type="number" name="GoalAmount" class="form-control" step="0.01" required />
+                    <span asp-validation-for="GoalAmount" class="text-danger"></span>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Валюта</label>
+                    <select asp-for="Currency" asp-items="Html.GetEnumSelectList<CurrencyType>()" class="form-select" required></select>
+                    <span asp-validation-for="Currency" class="text-danger"></span>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Дата достижения</label>
+                    <input type="date" name="TargetDate" class="form-control" required />
+                    <span asp-validation-for="TargetDate" class="text-danger"></span>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Список целей -->
+    @if (!Model.FinancialGoalAccounts.Any())
+    {
+        <p class="text-muted">Вы ещё не добавили ни одной финансовой цели.</p>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var goal in Model.FinancialGoalAccounts)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm rounded-4">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@goal.Name</h5>
+                            <p class="card-text mb-3">
+                                <strong>Цель:</strong> @goal.GoalAmount @goal.Currency<br />
+                                <strong>Баланс:</strong> @goal.Balance @goal.Currency<br />
+                                <strong>Дата:</strong> @goal.TargetDate.ToLocalTime().ToShortDateString()
+                            </p>
+
+                            <!-- Форма добавления баланса -->
+                            <form asp-controller="FinancialGoalAccount" asp-action="AddBalanceToGoal" method="post" class="mt-auto">
+                                <div class="d-flex gap-2">
+                                    <input type="hidden" name="financialGoalAccountId" value="@goal.Id" />
+                                    <input type="number" name="amount" step="0.01" class="form-control" placeholder="Сумма" required />
+                                    <button type="submit" class="btn btn-outline-primary">Добавить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</div>
+
+<script>
+    function toggleGoalForm() {
+        const form = document.getElementById("goalForm");
+        form.style.display = form.style.display === "none" ? "block" : "none";
+    }
+</script>
+
+@section Footer {
+    <footer class="text-center text-muted mt-4"> Copyright © FinLit.by, @DateTime.Now.Year. All rights reserved </footer>
+}

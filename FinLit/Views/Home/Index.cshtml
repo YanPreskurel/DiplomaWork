@@ -1,18 +1,15 @@
-﻿@{
-    ViewBag.Title = "Index";  
+﻿@model FinLit.ViewModels.IndexViewModel
+
+@{
+    ViewBag.Title = "Home";  
 }
+
+@await Html.PartialAsync("~/Views/Account/AccountView.cshtml", Model.AccountMoneyTracking)
+@await Html.PartialAsync("~/Views/Transaction/AddTransactionView.cshtml", Model.TransactionFormViewModel)
+
 
 @section Footer {
-         Copyright© Metanit.com, @DateTime.Now.Year. All rights reserved
+    <footer class="text-center text-muted mt-4">Copyright © FinLit.by, @DateTime.Now.Year. All rights reserved</footer>
 }
 
-<!doctype html>
-<html>
-    <head>
-        <title>Hello.World</title>
-        <meta charset="utf-8"/>
-    </head>
-    <body>
-        <h3>Index Time: @DateTime.Now</h3>
-    </body>
-</html>
+

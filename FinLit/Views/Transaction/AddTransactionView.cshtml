@@ -1,0 +1,109 @@
+﻿@model FinLit.ViewModels.TransactionFormViewModel
+
+@{
+    Layout = null; // Отключаем Layout для данного частичного представления
+}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<form method="post" asp-controller="Transaction" asp-action="AddTransaction" class="card p-4 mb-4">
+    <h4>Добавить</h4>
+
+    <div class="row mb-3">
+        <!-- Сумма -->
+        <div class="col-md-4">
+            <label for="Amount" class="form-label">Сумма</label>
+            <input type="number" step="0.01" min="0" class="form-control" name="Amount" id="Amount" required />
+        </div>
+
+        <!-- Тип: Расход / Доход -->
+        <div class="col-md-4">
+            <label class="form-label d-block">Тип</label>
+            <div class="btn-group" role="group" aria-label="Тип транзакции">
+                <input type="radio" class="btn-check" name="TransactionTypeFilter" id="Expense" value="Expense" checked>
+                <label class="btn btn-outline-danger" for="Expense">Расход</label>
+
+                <input type="radio" class="btn-check" name="TransactionTypeFilter" id="Income" value="Income">
+                <label class="btn btn-outline-success" for="Income">Доход</label>
+            </div>
+        </div>
+
+        <!-- Категория -->
+        <div class="col-md-4">
+            <label for="CategoryId" class="form-label">Категория</label>
+            <select class="form-select" name="CategoryId" id="CategoryId" required>
+                <option value="">Выберите категорию</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Id" data-type="@category.CategoryType">@category.CategoryName</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="text-end mb-3">
+        <button type="button" class="btn btn-sm btn-outline-secondary me-2" id="toggle-comment">💬 Комментарий</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary me-2" id="toggle-tag">🏷️ Тег</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="toggle-attachment">📎 Вложение</button>
+    </div>
+
+    <!-- Комментарий -->
+    <div class="mb-3 d-none" id="comment-section">
+        <label for="CommentText" class="form-label">Комментарий</label>
+        <input type="text" class="form-control" name="CommentText" id="CommentText" />
+    </div>
+
+    <!-- Тег -->
+    <div class="mb-3 d-none" id="tag-section">
+        <label for="TagName" class="form-label">Тег</label>
+        <input type="text" class="form-control" name="TagName" id="TagName" />
+    </div>
+
+    <!-- Вложение -->
+    <div class="mb-3 d-none" id="attachment-section">
+        <label for="AttachmentUrl" class="form-label">Ссылка на вложение</label>
+        <input type="text" class="form-control" name="AttachmentUrl" id="AttachmentUrl" />
+    </div>
+
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary">Внести</button>
+    </div>
+</form>
+
+<!-- Скрипт для переключения -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const transactionTypeRadios = document.querySelectorAll('input[name="TransactionTypeFilter"]');
+        const categorySelect = document.getElementById('CategoryId');
+
+        function filterCategories(type) {
+            Array.from(categorySelect.options).forEach(option => {
+                if (!option.value) return; // оставить "Выберите категорию"
+                option.hidden = option.dataset.type !== type;
+            });
+            categorySelect.value = ''; // сброс выбора
+        }
+
+        transactionTypeRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                filterCategories(this.value);
+            });
+        });
+
+        // Инициализация на старте (если уже выбрано "Expense")
+        filterCategories(document.querySelector('input[name="TransactionTypeFilter"]:checked').value);
+    });
+</script>
+
+<script>
+    document.getElementById('toggle-comment').onclick = () =>
+        document.getElementById('comment-section').classList.toggle('d-none');
+    document.getElementById('toggle-tag').onclick = () =>
+        document.getElementById('tag-section').classList.toggle('d-none');
+    document.getElementById('toggle-attachment').onclick = () =>
+        document.getElementById('attachment-section').classList.toggle('d-none');
+</script>
