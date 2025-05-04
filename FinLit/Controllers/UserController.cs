@@ -1,4 +1,5 @@
-﻿using FinLit.Data.Interfaces;
+﻿using FinLit.Data.Enums;
+using FinLit.Data.Interfaces;
 using FinLit.Data.Models;
 using FinLit.Data.Repository;
 using FinLit.ViewModels;
@@ -10,10 +11,19 @@ namespace FinLit.Controllers
 {
     public class UserController : Controller
     {
-        IUsers usersRepository;
-        public UserController(IUsers usersRepository)
+        private readonly IUsers usersRepository;
+
+        private readonly IAccounts accountsRepository;
+        private readonly ICategories categoriesRepository;
+        private readonly IPersonalizations personalizationsRepository;
+        private readonly IUsersSettings usersSettingsRepository;
+        public UserController(IUsers usersRepository, IAccounts accountsRepository, ICategories categoriesRepository, IPersonalizations personalizationsRepository, IUsersSettings usersSettingsRepository)
         {
             this.usersRepository = usersRepository;
+            this.accountsRepository = accountsRepository;
+            this.categoriesRepository = categoriesRepository;
+            this.personalizationsRepository = personalizationsRepository;
+            this.usersSettingsRepository = usersSettingsRepository;
         }
 
         [HttpGet]
@@ -70,6 +80,23 @@ namespace FinLit.Controllers
 
             await usersRepository.AddAsync(newUser);
             HttpContext.Session.SetInt32("UserId", newUser.Id);
+
+            // инициализация дефолтных сущностей для нового зарегестрированного пользователя - вынести в отдельный сервис с передачей UserId
+            var newAccount = new Account
+            {
+                Balance = 0,
+                Currency = CurrencyType.BYN.ToString(),
+                Name = "Основной",
+                UserId = newUser.Id
+            };
+
+            await accountsRepository.AddAsync(newAccount);
+            await categoriesRepository.AddAsync(new Category { CategoryName = "Другое", CategoryType = "Expense", CategoryImage = "", UserId = newUser.Id });
+            await categoriesRepository.AddAsync(new Category { CategoryName = "Другое", CategoryType = "Income", CategoryImage = "", UserId = newUser.Id });
+            await personalizationsRepository.AddAsync(new Personalization { AccountId = newAccount.Id, PeriodOfTime = "Month", UserId = newUser.Id });
+            await usersSettingsRepository.AddAsync(new UserSettings { NotificationPreferences = false, Theme = "Default", UserId = newUser.Id });
+            //----------------------------------------------------------------------------------------------------------------
+
             return RedirectToAction("Index", "Home");
         }
 

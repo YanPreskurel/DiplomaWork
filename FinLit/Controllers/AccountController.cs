@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace FinLit.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
 
         private readonly IAccounts accountsRepository;
@@ -21,7 +21,7 @@ namespace FinLit.Controllers
 
         public async Task<PartialViewResult> AccountView()
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
+            var userId = GetUserIdOrRedirect();
 
             var model = new AccountMoneyTrackingViewModel
             {
@@ -46,10 +46,7 @@ namespace FinLit.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAccount(Account account)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-
-            if (userId == null)
-                return RedirectToAction("AuthentificationView", "User");
+            var userId = GetUserIdOrRedirect();
 
             if (ModelState.IsValid)
             {
@@ -58,7 +55,7 @@ namespace FinLit.Controllers
                     Name = account.Name,
                     Balance = account.Balance,
                     Currency = account.Currency,
-                    UserId = (int)userId
+                    UserId = userId
                 };
 
                 await accountsRepository.AddAsync(newAccount);

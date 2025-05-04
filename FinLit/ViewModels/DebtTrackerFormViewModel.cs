@@ -6,6 +6,8 @@ namespace FinLit.ViewModels
 {
     public class DebtTrackerFormViewModel
     {
+        public int Id { get; set; }
+
         public string? DebtType { get; set; } // Incoming or Outgoing
 
         [Required]
@@ -21,7 +23,6 @@ namespace FinLit.ViewModels
         public bool Status { get; set; } = false;
 
         public IEnumerable<DebtTracker> DebtTrackers { get; set; } = new List<DebtTracker>();
-
     }
 }
 

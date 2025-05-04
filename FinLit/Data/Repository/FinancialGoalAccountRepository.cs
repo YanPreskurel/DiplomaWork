@@ -29,7 +29,7 @@ namespace FinLit.Data.Repository
                 dbContent.FinancialGoalAccounts.Remove(obj);
             }
         }
-        public async Task<IEnumerable<FinancialGoalAccount>> GetAllAsync() => await dbContent.FinancialGoalAccounts.ToListAsync();
+        public async Task<IEnumerable<FinancialGoalAccount>> GetAllAsync() => await dbContent.FinancialGoalAccounts.OrderBy(fga => fga.TargetDate).ToListAsync();
         public async Task<FinancialGoalAccount> GetByIdAsync(int id)
         {
             var obj = await dbContent.FinancialGoalAccounts.FindAsync(id);

@@ -33,13 +33,13 @@
                                 <button type="submit" class="btn btn-link p-0 text-decoration-none">@account.Name</button>
                             </form>
                         </td>
-                        <td>@account.Balance</td>
+                        <td>@account.Balance @account.Currency</td>
                         <td>
                             @if (Model.MoneyTrackings != null)
                             {
                                 @foreach (var mt in Model.MoneyTrackings.Where(mt => mt.AccountId == account.Id))
                                 {
-                                    @mt.Amount
+                                    <span>@mt.Amount</span> <span>@account.Currency</span>
                                 }
                             }
                             else

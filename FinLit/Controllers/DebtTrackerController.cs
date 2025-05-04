@@ -1,4 +1,5 @@
-﻿using FinLit.Data.Interfaces;
+﻿using FinLit.Data.Enums;
+using FinLit.Data.Interfaces;
 using FinLit.Data.Models;
 using FinLit.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FinLit.Controllers
 {
-    public class DebtTrackerController : Controller
+    public class DebtTrackerController : BaseController
     {
         private readonly IDebtTrackers debtTrackersRepository;
 
@@ -18,12 +19,7 @@ namespace FinLit.Controllers
         [HttpGet]
         public async Task<IActionResult> DebtTrackerView()
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-
-            if (userId == null)
-            {
-                return RedirectToAction("AuthentificationView", "User");
-            }            
+            var userId = GetUserIdOrRedirect();
 
             var debtTrackers = (await debtTrackersRepository.GetAllAsync()).Where(dt => dt.UserId == userId);
 
@@ -38,13 +34,8 @@ namespace FinLit.Controllers
 
         [HttpPost]
         public async Task<IActionResult> AddDebtTracker(DebtTrackerFormViewModel model)
-        { 
-            var userId = HttpContext.Session.GetInt32("UserId");
-
-            if (userId == null)
-            {
-                return RedirectToAction("AuthentificationView", "User");
-            }
+        {
+            var userId = GetUserIdOrRedirect();
 
             if (!ModelState.IsValid)
             {
@@ -55,17 +46,81 @@ namespace FinLit.Controllers
             }
 
             var newDebtTracker = new DebtTracker
-            { 
+            {
                 Amount = model.Amount,
                 Currency = model.Currency?.ToString() ?? "",
                 Debtor = model.Debtor ?? "",
                 DebtType = model.DebtType ?? "",
                 DueDate = model.DueDate.ToUniversalTime(),
                 Status = model.Status,
-                UserId = (int)userId           
+                UserId = userId
             };
 
             return RedirectToAction("DebtTrackerView");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteDebtTracker(int id)
+        {
+            var userId = GetUserIdOrRedirect();
+
+            var debtTracker = await debtTrackersRepository.GetByIdAsync(id);
+
+            if (debtTracker.UserId != userId)
+                return RedirectToAction("AuthentificationView", "User");
+
+            await debtTrackersRepository.DeleteAsync(id);
+
+            return RedirectToAction("DebtTrackerView");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditDebtTracker(int id)
+        {
+            var userId = GetUserIdOrRedirect();
+
+            var debtTracker = await debtTrackersRepository.GetByIdAsync(id);
+
+            if (debtTracker.UserId != userId)
+                return RedirectToAction("AuthentificationView", "User");
+
+            var model = new DebtTrackerFormViewModel
+            {
+                Id = debtTracker.Id,
+                Amount = debtTracker.Amount,
+                Currency = Enum.TryParse<CurrencyType>(debtTracker.Currency, out var currency) ? currency : null,
+                Debtor = debtTracker.Debtor,
+                DebtType = debtTracker.DebtType,
+                DueDate = debtTracker.DueDate.ToLocalTime(),
+                Status = debtTracker.Status
+            };
+
+            return View("EditDebtTrackerView", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditDebtTracker(DebtTrackerFormViewModel model)
+        {
+            var userId = GetUserIdOrRedirect();
+
+            if (!ModelState.IsValid)
+                return View("EditDebtTrackerView", model);
+
+            var debtTracker = await debtTrackersRepository.GetByIdAsync(model.Id);
+            if (debtTracker.UserId != userId)
+                return RedirectToAction("AuthentificationView", "User");
+
+            debtTracker.Amount = model.Amount;
+            debtTracker.Currency = model.Currency?.ToString() ?? "";
+            debtTracker.Debtor = model.Debtor ?? "";
+            debtTracker.DebtType = model.DebtType ?? "";
+            debtTracker.DueDate = model.DueDate.ToUniversalTime();
+            debtTracker.Status = model.Status;
+
+            await debtTrackersRepository.UpdateAsync(debtTracker);
+
+            return RedirectToAction("DebtTrackerView");
+        }
+
     }
 }

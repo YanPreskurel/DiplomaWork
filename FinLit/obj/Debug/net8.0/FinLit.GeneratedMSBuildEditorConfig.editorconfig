@@ -44,6 +44,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVidFRyYWNrZXJcRGVidFRyYWNrZXJWaWV3LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/DiplomaWork/FinLit/Views/DebtTracker/EditDebtTrackerView.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVidFRyYWNrZXJcRWRpdERlYnRUcmFja2VyVmlldy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/DiplomaWork/FinLit/Views/FinancialGoalAccount/FinancialGoalAccountView.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRmluYW5jaWFsR29hbEFjY291bnRcRmluYW5jaWFsR29hbEFjY291bnRWaWV3LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
