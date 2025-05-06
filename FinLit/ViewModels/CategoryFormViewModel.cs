@@ -4,7 +4,8 @@ namespace FinLit.ViewModels
 {
     public class CategoryFormViewModel
     {
-        public string? CategoryName { get; set; }
+        public int Id { get; set; }
+        public string CategoryName { get; set; } = "";
         public string? CategoryType { get; set; } // "Income" or "Expense"
         public string? CategoryImage { get; set; }
 

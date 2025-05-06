@@ -9,7 +9,7 @@
         <div class="col-md-3">
             <ul class="list-group" id="settings-menu">
                 <li class="list-group-item active" data-section="personalization">Персонализация</li>
-                <li class="list-group-item" data-section="theme">Тема</li>
+                <li class="list-group-item" data-section="theme">Внешний вид</li>
                 <li class="list-group-item" data-section="notifications">Уведомления</li>
             </ul>
         </div>
@@ -22,9 +22,9 @@
                     <div class="mb-3">
                         <label>Период отображения по умолчанию</label>
                         <select asp-for="Personalization.PeriodOfTime" class="form-select">
-                            <option value="day">День</option>
-                            <option value="month">Месяц</option>
-                            <option value="year">Год</option>
+                            <option value="Day">День</option>
+                            <option value="Month">Месяц</option>
+                            <option value="Year">Год</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -42,8 +42,8 @@
                 <form asp-action="UpdateUserSettings" method="post">
                     <select asp-for="UserSettings.Theme" class="form-select mb-3">
                         <option value="default">По умолчанию</option>
-                        <option value="light">Светлая</option>
-                        <option value="dark">Тёмная</option>
+                        <option value="Light">Светлая</option>
+                        <option value="Dark">Тёмная</option>
                     </select>
                     <input type="hidden" asp-for="UserSettings.Id" />
                     <button type="submit" class="btn btn-primary">Сохранить</button>

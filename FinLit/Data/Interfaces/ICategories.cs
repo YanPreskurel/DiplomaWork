@@ -10,5 +10,6 @@ namespace FinLit.Data.Interfaces
         Task AddAsync(Category category);
         Task DeleteAsync(int id);
         Task<Category> GetByIdAsync(int id);
+        Task UpdateAsync(Category category);
     }
 }
