@@ -31,5 +31,22 @@ namespace FinLit.Services
 
             await accountsRepository.UpdateAsync(account);
         }
+
+        public async Task DeleteTransactionToAccountAsync(Transaction transaction)
+        {
+            var account = await accountsRepository.GetByIdAsync(transaction.AccountId);
+            var category = await categoriesRepository.GetByIdAsync(transaction.CategoryId);
+
+            if (category.CategoryType == "Expense")
+            {
+                account.Balance += transaction.Amount;
+            }
+            else
+            {
+                account.Balance -= transaction.Amount;
+            }
+
+            await accountsRepository.UpdateAsync(account);
+        }
     }
 }

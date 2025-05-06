@@ -166,10 +166,7 @@ namespace FinLit.Data
                 {
                     var list = new Category[]
                     {
-                        new Category { CategoryName = "Продукты", CategoryType = "Expense", UserId = 1},
-                        new Category { CategoryName = "Транспорт", CategoryType = "Expense", UserId = 1},
-                        new Category { CategoryName = "Работа", CategoryType = "Income", UserId = 1 },
-                        new Category { CategoryName = "Пенсия", CategoryType = "Income", UserId = 1 }
+
                     };
 
                     category = new List<Category>();

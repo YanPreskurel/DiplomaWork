@@ -4,6 +4,10 @@ namespace FinLit.Data.Interfaces
 {
     public interface ITransactionTags
     {
-        public Task AddAsync(TransactionTag transactionTag);
+        Task AddAsync(TransactionTag transactionTag);
+        Task DeleteAsync(int id);
+        Task<TransactionTag> GetByIdAsync(int Id);
+        Task UpdateAsync(TransactionTag transactionTag);
+
     }
 }
