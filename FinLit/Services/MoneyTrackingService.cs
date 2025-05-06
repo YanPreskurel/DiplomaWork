@@ -30,6 +30,9 @@ namespace FinLit.Services
             var transactions = await transactionsRepository.GetAllAsync();
             var categories = await categoriesRepository.GetAllAsync();
 
+            moneyTracking.StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).ToUniversalTime();
+            moneyTracking.EndDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).AddMonths(1).AddDays(-1).ToUniversalTime();
+
             foreach (var transaction in transactions)
             {
                 if (transaction.AccountId == accountId && transaction.Date >= moneyTracking.StartDate && transaction.Date <= moneyTracking.EndDate)

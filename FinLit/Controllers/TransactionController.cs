@@ -1,15 +1,17 @@
-﻿using FinLit.Data.Interfaces;
+﻿using FinLit.Data.Enums;
+using FinLit.Data.Interfaces;
 using FinLit.Data.Models;
 using FinLit.Data.Repository;
 using FinLit.Services;
 using FinLit.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Transaction = FinLit.Data.Models.Transaction;
 
 namespace FinLit.Controllers
 {
-    public class TransactionController : Controller
+    public class TransactionController : BaseController
     {
         private readonly ITransactions transactionsRepository;
         private readonly ICategories categoriesRepository;
@@ -42,14 +44,9 @@ namespace FinLit.Controllers
         [HttpGet]
         public async Task<IActionResult> TransactionView(string operationType = "All", DateTime? startDate = null, DateTime? endDate = null, int? selectedCategoryId = null)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
+            var userId = GetUserIdOrRedirect();             
 
-            if (userId == null)
-            {
-                return RedirectToAction("AuthentificationView", "User");
-            }
-
-            var transactions = await transactionsRepository.GetAllAsync();
+            var transactions = (await transactionsRepository.GetAllAsync()).Where(t => t.UserId == userId);
             
             foreach(var transaction in transactions)
             {
@@ -100,11 +97,174 @@ namespace FinLit.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddTransaction(TransactionFormViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = GetUserIdOrRedirect();
+
+                var selectedAccountId = HttpContext.Session.GetInt32("SelectedAccountId") ?? 1; // добавить строку что либо выбранный акканут либо дефолтный потом в дальнейшем во вкладке персонализации
+
+                var category = await categoriesRepository.GetByIdAsync(model.CategoryId);
+                if (category == null)
+                {
+                    return BadRequest("Категория не найдена");
+                }
+
+                // Создаём комментарий
+                var comment = new TransactionComment { CommentText = model.CommentText ?? "", UserId = (int)userId };
+                await transactionCommentsRepository.AddAsync(comment);
+
+                // Создаём тег
+                var tag = new TransactionTag { TagName = model.TagName ?? "", UserId = (int)userId };
+                await transactionTagsRepository.AddAsync(tag);
+
+                // Создаём вложение
+                var attachment = new TransactionAttachment { FilePath = model.AttachmentUrl ?? "", UserId = (int)userId };
+                await transactionAttachmentsRepository.AddAsync(attachment);
+
+                // Создаём транзакцию
+                var transaction = new Transaction
+                {
+                    UserId = userId,
+                    Amount = model.Amount,
+                    Date = DateTime.Now.ToUniversalTime(),
+                    CategoryId = model.CategoryId,
+                    AccountId = selectedAccountId,
+                    TransactionCommentId = comment.Id,
+                    TransactionTagId = tag.Id,
+                    TransactionAttachmentId = attachment.Id
+                };
+
+                await transactionsRepository.AddAsync(transaction);
+                await accountService.AddTransactionToAccountAsync(transaction);
+                await moneyTrackingService.UpdateMoneyTrackingAsync(transaction.AccountId);
+
+                return RedirectToAction("Index", "Home");
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteTransaction(int id)
+        {
+            var userId = GetUserIdOrRedirect();
+
+            var transaction = await transactionsRepository.GetByIdAsync(id);
+
+            var accountId = transaction.AccountId;
+
+            if (transaction.UserId != userId)
+                return RedirectToAction("AuthentificationView", "User");
+
+            await accountService.DeleteTransactionToAccountAsync(transaction);
+
+            await transactionCommentsRepository.DeleteAsync(transaction.TransactionCommentId); // удаляю зависимости
+            await transactionAttachmentsRepository.DeleteAsync(transaction.TransactionAttachmentId);
+            await transactionTagsRepository.DeleteAsync(transaction.TransactionTagId);
+
+            await transactionsRepository.DeleteAsync(id);
+
+            await moneyTrackingService.UpdateMoneyTrackingAsync(accountId);
+
+            return RedirectToAction("TransactionView");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditTransaction(int id)
+        {
+            var userId = GetUserIdOrRedirect();
+
+            var transaction = await transactionsRepository.GetByIdAsync(id);
+
+            if (transaction.UserId != userId)
+                return RedirectToAction("AuthentificationView", "User");
+
+            var comment = await transactionCommentsRepository.GetByIdAsync(transaction.TransactionCommentId);
+            var tag = await transactionTagsRepository.GetByIdAsync(transaction.TransactionTagId);
+            var attachment = await transactionAttachmentsRepository.GetByIdAsync(transaction.TransactionAttachmentId);
+
+            var model = new TransactionCategoryViewModel
+            {
+                TransactionId = transaction.Id,
+                Amount = transaction.Amount,
+                AccountId = transaction.AccountId,
+                CategoryId = transaction.CategoryId,
+                TransactionAttachmentId = transaction.TransactionAttachmentId,
+                TransactionCommentId = transaction.TransactionCommentId,
+                TransactionTagId = transaction.TransactionTagId,
+
+                CommentText = comment?.CommentText,
+                TagName = tag?.TagName,
+                AttachmentUrl = attachment?.FilePath,
+
+                Accounts = (await accountsRepository.GetAllAsync()).Where(a => a.UserId == userId),
+                Categories = (await categoriesRepository.GetAllAsync()).Where(a => a.UserId == userId)
+            };
+
+            return View("EditTransactionView", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditTransaction(TransactionCategoryViewModel model)
+        {
+            var userId = GetUserIdOrRedirect();
+
+            if (!ModelState.IsValid)
+                return View("EditTransactionView", model);
+
+            var transaction = await transactionsRepository.GetByIdAsync(model.TransactionId);
+            if (transaction.UserId != userId)
+                return RedirectToAction("AuthentificationView", "User");
+
+            var oldAccountId = transaction.AccountId;
+            var oldCategoryId = transaction.CategoryId;
+            var oldAmount = transaction.Amount;
+
+            await accountService.DeleteTransactionToAccountAsync(new Transaction
+            {
+                AccountId = oldAccountId,
+                CategoryId = oldCategoryId,
+                Amount = oldAmount
+            });
+
+            transaction.Id = model.TransactionId;
+            transaction.Amount = model.Amount;
+            transaction.AccountId = model.AccountId;
+            transaction.CategoryId = model.CategoryId;
+            transaction.TransactionAttachmentId = model.TransactionAttachmentId;
+            transaction.TransactionCommentId = model.TransactionCommentId;
+            transaction.TransactionTagId = model.TransactionTagId;
+
+            
+            var comment = await transactionCommentsRepository.GetByIdAsync(transaction.TransactionCommentId);
+            comment.CommentText = model.CommentText ?? "";
+            await transactionCommentsRepository.UpdateAsync(comment);
+
+            var tag = await transactionTagsRepository.GetByIdAsync(transaction.TransactionTagId);
+            tag.TagName = model.TagName ?? "";
+            await transactionTagsRepository.UpdateAsync(tag);
+
+            var attachment = await transactionAttachmentsRepository.GetByIdAsync(transaction.TransactionAttachmentId);
+            attachment.FilePath = model.AttachmentUrl ?? "";
+            await transactionAttachmentsRepository.UpdateAsync(attachment);
+
+            await transactionsRepository.UpdateAsync(transaction);
+
+            await accountService.AddTransactionToAccountAsync(transaction);
+
+            await moneyTrackingService.UpdateMoneyTrackingAsync(oldAccountId);
+            if (oldAccountId != transaction.AccountId)
+                await moneyTrackingService.UpdateMoneyTrackingAsync(transaction.AccountId);
+
+            return RedirectToAction("TransactionView");
+        }
+
         //[HttpGet]
         //public async Task<IActionResult> GetFilteredTransactions(string operationType = "All", DateTime? startDate = null, DateTime? endDate = null, int? selectedCategoryId = null)
         //{
-        //    var userId = HttpContext.Session.GetInt32("UserId");
-        //    if (userId == null) return Unauthorized();
+        //    var userId = GetUserIdOrRedirect(); 
 
         //    var transactions = await transactionsRepository.GetAllAsync();
 
@@ -154,58 +314,5 @@ namespace FinLit.Controllers
 
 
 
-        [HttpPost]
-        public async Task<IActionResult> AddTransaction(TransactionFormViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var userId = HttpContext.Session.GetInt32("UserId");
-                if (userId == null)
-                {
-                    Console.WriteLine("User ID не найден в сессии.");
-                    return RedirectToAction("AuthentificationView", "User");
-                }
-
-                var selectedAccountId = HttpContext.Session.GetInt32("SelectedAccountId") ?? 1; // добавить строку что либо выбранный акканут либо дефолтный потом в дальнейшем во вкладке персонализации
-
-                var category = await categoriesRepository.GetByIdAsync(model.CategoryId);
-                if (category == null)
-                {
-                    return BadRequest("Категория не найдена");
-                }
-
-                // Создаём комментарий
-                var comment = new TransactionComment { CommentText = model.CommentText ?? "", UserId = (int)userId };
-                await transactionCommentsRepository.AddAsync(comment);
-
-                // Создаём тег
-                var tag = new TransactionTag { TagName = model.TagName ?? "", UserId = (int)userId };
-                await transactionTagsRepository.AddAsync(tag);
-
-                // Создаём вложение
-                var attachment = new TransactionAttachment { FilePath = model.AttachmentUrl ?? "", UserId = (int)userId };
-                await transactionAttachmentsRepository.AddAsync(attachment);
-
-                // Создаём транзакцию
-                var transaction = new Transaction
-                {
-                    UserId = userId.Value,
-                    Amount = model.Amount,
-                    Date = DateTime.Now.ToUniversalTime(),
-                    CategoryId = model.CategoryId,
-                    AccountId = selectedAccountId,
-                    TransactionCommentId = comment.Id,
-                    TransactionTagId = tag.Id,
-                    TransactionAttachmentId = attachment.Id
-                };
-
-                await transactionsRepository.AddAsync(transaction);
-                await accountService.AddTransactionToAccountAsync(transaction);
-                await moneyTrackingService.UpdateMoneyTrackingAsync(transaction.AccountId);
-
-                return RedirectToAction("Index", "Home");
-            }
-            return View(model);
-        }
     }
 }

@@ -1,0 +1,54 @@
+﻿@model FinLit.ViewModels.TransactionCategoryViewModel
+
+<form asp-action="EditTransaction" method="post" class="card p-4 shadow-sm rounded-4">
+    <input type="hidden" asp-for="TransactionId" />
+    <input type="hidden" asp-for="TransactionAttachmentId" />
+    <input type="hidden" asp-for="TransactionCommentId" />
+    <input type="hidden" asp-for="TransactionTagId" />
+
+    <div class="mb-3">
+        <label class="form-label">Сумма</label>
+        <input asp-for="Amount" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Счет</label>
+        <select asp-for="AccountId" class="form-select">
+            @foreach (var acc in Model.Accounts)
+            {
+                    <option value="@acc.Id">@acc.Name (@acc.Currency)</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Категория</label>
+        <select asp-for="CategoryId" class="form-select">
+            @foreach (var cat in Model.Categories)
+            {
+                    <option value="@cat.Id">@cat.CategoryName</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Комментарий</label>
+        <textarea asp-for="CommentText" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Тег</label>
+        <input asp-for="TagName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Вложение (URL)</label>
+        <input asp-for="AttachmentUrl" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+</form>
+
+@section Footer {
+    <footer class="text-center text-muted mt-4">Copyright © FinLit.by, @DateTime.Now.Year. All rights reserved</footer>
+}

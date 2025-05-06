@@ -56,6 +56,7 @@
             <th>Время</th>
             <th>Категория</th>
             <th>Тип</th>
+            <th>Действия</th>
         </tr>
     </thead>
     <tbody>
@@ -79,6 +80,16 @@
                     {
                         <span class="text-danger">Расход</span>
                     }
+                </td>
+                <td class="text-nowrap">
+                    <a asp-action="EditTransaction" asp-route-id="@transaction.Id" class="btn btn-link p-0 me-2" title="Редактировать">
+                        <i class="bi bi-pencil-square fs-5 text-primary"></i>
+                    </a>
+                    <form method="post" asp-action="DeleteTransaction" asp-route-id="@transaction.Id" style="display:inline;" onsubmit="return confirm('Удалить этот долг?');">
+                        <button type="submit" class="btn btn-link p-0" title="Удалить">
+                            <i class="bi bi-trash fs-5 text-danger"></i>
+                        </button>
+                    </form>
                 </td>
             </tr>
         }
