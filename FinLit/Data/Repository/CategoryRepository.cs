@@ -50,5 +50,11 @@ namespace FinLit.Data.Repository
 
             return category;
         }
+
+        public async Task UpdateAsync(Category category)
+        {
+            dbContent.Categories.Update(category);
+            await dbContent.SaveChangesAsync();
+        }
     }
 }

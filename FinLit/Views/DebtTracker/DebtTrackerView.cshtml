@@ -59,8 +59,14 @@
                 <input asp-for="Status" class="form-check-input" type="checkbox" />
                 <label class="form-check-label">Долг погашен</label>
             </div>
-
-            <button type="submit" class="btn btn-success">Добавить</button>
+            <div class="d-flex justify-content-between mt-4">
+                <div>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+                <div>
+                    <a asp-action="DebtTrackerView" class="btn btn-secondary ms-2">Назад</a>
+                </div>
+            </div>
         </form>
     </div>
 
@@ -93,17 +99,18 @@
                             <td>@(debt.DebtType == "Incoming" ? "Вам должны" : "Вы должны")</td>
                             <td>@(debt.DueDate == DateTime.MinValue ? "-" : debt.DueDate.ToLocalTime().ToShortDateString())</td>
                             <td>@(debt.Status ? "Закрыт" : "Открыт")</td>
-                            <td class="text-nowrap">
-                                <a asp-action="EditDebtTracker" asp-route-id="@debt.Id" class="btn btn-link p-0 me-2" title="Редактировать">
-                                    <i class="bi bi-pencil-square fs-5 text-primary"></i>
-                                </a>
-                                <form method="post" asp-action="DeleteDebtTracker" asp-route-id="@debt.Id" style="display:inline;" onsubmit="return confirm('Удалить этот долг?');">
-                                    <button type="submit" class="btn btn-link p-0" title="Удалить">
-                                        <i class="bi bi-trash fs-5 text-danger"></i>
-                                    </button>
-                                </form>
+                            <td class="text-left">
+                                <div class="d-inline-flex gap-2">
+                                    <a asp-action="EditDebtTracker" asp-route-id="@debt.Id" class="btn btn-sm btn-light p-1" title="Редактировать">
+                                        <i class="bi bi-pencil-square text-primary"></i>
+                                    </a>
+                                    <form method="post" asp-action="DeleteDebtTracker" asp-route-id="@debt.Id" onsubmit="return confirm('Удалить этот долг?');">
+                                        <button type="submit" class="btn btn-sm btn-light p-1" title="Удалить">
+                                            <i class="bi bi-trash text-danger"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
-
                         </tr>
                     }
                 </tbody>

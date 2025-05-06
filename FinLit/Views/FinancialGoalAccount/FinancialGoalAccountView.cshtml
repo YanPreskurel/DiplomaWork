@@ -38,9 +38,15 @@
                     <input type="date" name="TargetDate" class="form-control" required />
                     <span asp-validation-for="TargetDate" class="text-danger"></span>
                 </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                <div class="d-flex justify-content-between mt-4">
+                    <div>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                    </div>
+                    <div>
+                        <a asp-action="FinancialGoalAccountView" class="btn btn-secondary ms-2">Назад</a>
+                    </div>
                 </div>
+
             </div>
         </form>
     </div>

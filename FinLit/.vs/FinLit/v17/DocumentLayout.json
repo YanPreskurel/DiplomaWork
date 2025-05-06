@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "D:\\DiplomaWork\\FinLit\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|d:\\diplomawork\\finlit\\viewmodels\\debttrackerformviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|solutionrelative:viewmodels\\debttrackerformviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|d:\\diplomawork\\finlit\\requirementsandbugs.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|solutionrelative:requirementsandbugs.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|d:\\diplomawork\\finlit\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|solutionrelative:views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|d:\\diplomawork\\finlit\\views\\debttracker\\editdebttrackerview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|solutionrelative:views\\debttracker\\editdebttrackerview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|d:\\diplomawork\\finlit\\views\\debttracker\\debttrackerview.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -17,6 +21,10 @@
     {
       "AbsoluteMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|d:\\diplomawork\\finlit\\controllers\\debttrackercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|solutionrelative:controllers\\debttrackercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|d:\\diplomawork\\finlit\\viewmodels\\debttrackerformviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{860D48AB-F8E1-489D-B776-99E2EB2E8D35}|FinLit.csproj|solutionrelative:viewmodels\\debttrackerformviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,17 +34,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 145,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "RequirementsAndBugs.txt",
               "DocumentMoniker": "D:\\DiplomaWork\\FinLit\\RequirementsAndBugs.txt",
               "RelativeDocumentMoniker": "RequirementsAndBugs.txt",
               "ToolTip": "D:\\DiplomaWork\\FinLit\\RequirementsAndBugs.txt",
               "RelativeToolTip": "RequirementsAndBugs.txt",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEkAAABTAAAAAAAAAA==",
+              "ViewState": "AgIAADkAAAAAAAAAAAAAAEoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
               "WhenOpened": "2025-05-03T17:56:34.172Z",
               "IsPinned": true,
@@ -44,7 +52,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "DebtTrackerFormViewModel.cs",
               "DocumentMoniker": "D:\\DiplomaWork\\FinLit\\ViewModels\\DebtTrackerFormViewModel.cs",
               "RelativeDocumentMoniker": "ViewModels\\DebtTrackerFormViewModel.cs",
@@ -58,13 +66,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "DebtTrackerView.cshtml",
               "DocumentMoniker": "D:\\DiplomaWork\\FinLit\\Views\\DebtTracker\\DebtTrackerView.cshtml",
               "RelativeDocumentMoniker": "Views\\DebtTracker\\DebtTrackerView.cshtml",
               "ToolTip": "D:\\DiplomaWork\\FinLit\\Views\\DebtTracker\\DebtTrackerView.cshtml",
               "RelativeToolTip": "Views\\DebtTracker\\DebtTrackerView.cshtml",
-              "ViewState": "AgIAAB0AAAAAAAAAAAAYwHcAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2025-05-04T18:52:34.697Z",
               "IsPinned": true,
@@ -72,16 +80,42 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "DebtTrackerController.cs",
               "DocumentMoniker": "D:\\DiplomaWork\\FinLit\\Controllers\\DebtTrackerController.cs",
               "RelativeDocumentMoniker": "Controllers\\DebtTrackerController.cs",
               "ToolTip": "D:\\DiplomaWork\\FinLit\\Controllers\\DebtTrackerController.cs",
               "RelativeToolTip": "Controllers\\DebtTrackerController.cs",
-              "ViewState": "AgIAAFgAAAAAAAAAAAAkwHoAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAF4AAAAAAAAAAAAkwG8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-05-04T18:52:47.368Z",
               "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "D:\\DiplomaWork\\FinLit\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Home\\Index.cshtml",
+              "ToolTip": "D:\\DiplomaWork\\FinLit\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-06T17:27:37.079Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "EditDebtTrackerView.cshtml",
+              "DocumentMoniker": "D:\\DiplomaWork\\FinLit\\Views\\DebtTracker\\EditDebtTrackerView.cshtml",
+              "RelativeDocumentMoniker": "Views\\DebtTracker\\EditDebtTrackerView.cshtml",
+              "ToolTip": "D:\\DiplomaWork\\FinLit\\Views\\DebtTracker\\EditDebtTrackerView.cshtml",
+              "RelativeToolTip": "Views\\DebtTracker\\EditDebtTrackerView.cshtml",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAADYAAABaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-05-06T17:17:26.668Z",
               "EditorCaption": ""
             }
           ]

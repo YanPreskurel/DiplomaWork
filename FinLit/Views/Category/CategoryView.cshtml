@@ -33,8 +33,13 @@
                     <label class="form-label">URL картинки (необязательно)</label>
                     <input type="text" name="CategoryImage" class="form-control" />
                 </div>
-                <div class="col-12 text-end">
-                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                <div class="d-flex justify-content-between mt-4">
+                    <div>
+                        <button type="submit" class="btn btn-primary">Добавить</button>
+                    </div>
+                    <div>
+                        <a asp-action="CategoryView" class="btn btn-secondary ms-2">Назад</a>
+                    </div>
                 </div>
             </div>
         </form>
@@ -47,16 +52,32 @@
                 @foreach (var category in Model.IncomeCategories)
                 {
                     <div class="col">
-                        <div class="card shadow-sm p-3 rounded-4 text-center h-100">
+                        <div class="card shadow-sm p-3 rounded-4 text-center h-100 position-relative d-flex flex-column justify-content-between">
                             @if (!string.IsNullOrEmpty(category.CategoryImage))
                             {
                                 <img src="@category.CategoryImage" class="card-img-top mx-auto" style="height: 60px; width: 60px;" />
                             }
+
                             <div class="card-body">
                                 <h6 class="card-title">@category.CategoryName</h6>
                             </div>
+
+                            @if (category.CategoryName?.ToLower() != "другое")
+                            {
+                                <div class="position-absolute bottom-0 end-0 m-2 d-flex gap-2">
+                                    <a asp-action="EditCategory" asp-route-id="@category.Id" class="btn btn-sm btn-light p-1" title="Редактировать">
+                                        <i class="bi bi-pencil-square text-primary"></i>
+                                    </a>
+                                    <form method="post" asp-action="DeleteCategory" asp-route-id="@category.Id" onsubmit="return confirm('Удалить эту категорию?');">
+                                        <button type="submit" class="btn btn-sm btn-light p-1" title="Удалить">
+                                            <i class="bi bi-trash text-danger"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            }
                         </div>
                     </div>
+
                 }
             </div>
         </div>
@@ -67,16 +88,32 @@
                 @foreach (var category in Model.ExpenseCategories)
                 {
                     <div class="col">
-                        <div class="card shadow-sm p-3 rounded-4 text-center h-100">
+                        <div class="card shadow-sm p-3 rounded-4 text-center h-100 position-relative d-flex flex-column justify-content-between">
                             @if (!string.IsNullOrEmpty(category.CategoryImage))
                             {
                                 <img src="@category.CategoryImage" class="card-img-top mx-auto" style="height: 60px; width: 60px;" />
                             }
+
                             <div class="card-body">
                                 <h6 class="card-title">@category.CategoryName</h6>
                             </div>
+
+                            @if (category.CategoryName?.ToLower() != "другое")
+                            {
+                                <div class="position-absolute bottom-0 end-0 m-2 d-flex gap-2">
+                                    <a asp-action="EditCategory" asp-route-id="@category.Id" class="btn btn-sm btn-light p-1" title="Редактировать">
+                                        <i class="bi bi-pencil-square text-primary"></i>
+                                    </a>
+                                    <form method="post" asp-action="DeleteCategory" asp-route-id="@category.Id" onsubmit="return confirm('Удалить эту категорию?');">
+                                        <button type="submit" class="btn btn-sm btn-light p-1" title="Удалить">
+                                            <i class="bi bi-trash text-danger"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            }
                         </div>
                     </div>
+
                 }
             </div>
         </div>

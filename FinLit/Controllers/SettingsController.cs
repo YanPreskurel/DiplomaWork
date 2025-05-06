@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FinLit.Controllers
 {
-    public class SettingsController : Controller
+    public class SettingsController : BaseController
     {
         private readonly IUsersSettings usersSettingsRepository;
         private readonly IPersonalizations personalizationsRepository;
@@ -26,9 +26,7 @@ namespace FinLit.Controllers
         [HttpGet]
         public async Task<IActionResult> SettingsView()
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("AuthentificationView", "User");
+            var userId = GetUserIdOrRedirect();
 
             var accounts = (await accountsRepository.GetAllAsync())
                 .Where(a => a.UserId == userId)
@@ -53,13 +51,11 @@ namespace FinLit.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdatePersonalization(SettingsViewModel model)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("AuthentificationView", "User");
+            var userId = GetUserIdOrRedirect();
 
             if (model.Personalization != null)
             {
-                model.Personalization.UserId = userId.Value;
+                model.Personalization.UserId = userId;
                 await personalizationsRepository.UpdateAsync(model.Personalization);
             }
 
@@ -69,13 +65,11 @@ namespace FinLit.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateUserSettings(SettingsViewModel model)
         {
-            var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-                return RedirectToAction("AuthentificationView", "User");
+            var userId = GetUserIdOrRedirect();
 
             if (model.UserSettings != null)
             {
-                model.UserSettings.UserId = userId.Value;
+                model.UserSettings.UserId = userId;
                 await usersSettingsRepository.UpdateAsync(model.UserSettings);
             }
 
@@ -106,8 +100,8 @@ namespace FinLit.Controllers
             }).ToList();
 
             ViewBag.Success = "Настройки успешно сохранены!";
+
             return View(model);
         }
-
     }
 }
